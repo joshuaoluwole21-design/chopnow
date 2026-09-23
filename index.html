@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>ChopNow - Food Ordering</title>
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #f7f7f7;
+      color: #222;
+    }
+
+    header {
+      background: #ff6b00;
+      color: white;
+      padding: 22px 15px;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 3px 10px rgba(0,0,0,.15);
+    }
+
+    header h1 {
+      font-size: 32px;
+    }
+
+    header p {
+      margin-top: 6px;
+      font-size: 15px;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    .hero {
+      background: white;
+      padding: 30px 20px;
+      border-radius: 15px;
+      text-align: center;
+      margin-bottom: 20px;
+      box-shadow: 0 3px 12px rgba(0,0,0,.08);
+    }
+
+    .hero h2 {
+      color: #ff6b00;
+      margin-bottom: 10px;
+      font-size: 27px;
+    }
+
+    .hero p {
+      color: #555;
+      line-height: 1.6;
+    }
+
+    .business-info {
+      margin-top: 15px;
+      padding: 12px;
+      background: #fff4ec;
+      border-radius: 10px;
+      font-size: 14px;
+    }
+
+    .business-info strong {
+      color: #ff6b00;
+    }
+
+    .categories {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      margin-bottom: 20px;
+      padding: 5px 2px 10px;
+    }
+
+    .category {
+      border: none;
+      background: white;
+      padding: 12px 18px;
+      border-radius: 25px;
+      cursor: pointer;
+      white-space: nowrap;
+      box-shadow: 0 2px 8px rgba(0,0,0,.08);
+      font-weight: bold;
+    }
+
+    .category.active {
+      background: #ff6b00;
+      color: white;
+    }
+
+    .food-grid {
+      display: grid;
+      grid-template-columns:
+        repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+    }
+
+    .food-card {
+      background: white;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 3px 12px rgba(0,0,0,.1);
+    }
+
+    .food-card img {
+      width: 100%;
+      height: 170px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .food-info {
+      padding: 15px;
+    }
+
+    .food-info h3 {
+      margin-bottom: 7px;
+    }
+
+    .food-info p {
+      color: #666;
+      font-size: 14px;
+      min-height: 42px;
+      line-height: 1.5;
+    }
+
+    .price {
+      color: #ff6b00;
+      font-weight: bold;
+      font-size: 18px;
+      margin: 12px 0;
+    }
+
+    .add-btn {
+      width: 100%;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      background: #ff6b00;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    .add-btn:active {
+      transform: scale(.98);
+    }
+
+    .cart,
+    .checkout {
+      background: white;
+      padding: 20px;
+      margin-top: 25px;
+      border-radius: 15px;
+      box-shadow: 0 3px 12px rgba(0,0,0,.1);
+    }
+
+    .cart h2,
+    .checkout h2 {
+      color: #ff6b00;
+      margin-bottom: 15px;
+    }
+
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 13px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .cart-item-name {
+      flex: 1;
+    }
+
+    .cart-item-name strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .cart-item-price {
+      color: #666;
+      font-size: 13px;
+    }
+
+    .quantity {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .quantity button {
+      width: 32px;
+      height: 32px;
+      border: none;
+      border-radius: 6px;
+      background: #ff6b00;
+      color: white;
+      cursor: pointer;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .quantity span {
+      min-width: 20px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .item-total {
+      font-weight: bold;
+      min-width: 85px;
+      text-align: right;
+    }
+
+    .totals {
+      margin-top: 18px;
+      line-height: 2;
+    }
+
+    .total {
+      font-size: 23px;
+      font-weight: bold;
+      color: #ff6b00;
+      border-top: 1px solid #ddd;
+      margin-top: 8px;
+      padding-top: 8px;
+    }
+
+    .empty {
+      color: #777;
+      padding: 10px 0;
+    }
+
+    .checkout label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .checkout input,
+    .checkout textarea,
+    .checkout select {
+      width: 100%;
+      padding: 13px;
+      margin-bottom: 14px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 15px;
+      outline: none;
+    }
+
+    .checkout input:focus,
+    .checkout textarea:focus,
+    .checkout select:focus {
+      border-color: #ff6b00;
+    }
+
+    .checkout textarea {
+      resize: vertical;
+    }
+
+    .whatsapp-btn {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 8px;
+      background: #25d366;
+      color: white;
+      font-size: 17px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 5px;
+    }
+
+    .whatsapp-btn:active {
+      transform: scale(.98);
+    }
+
+    .contact-box {
+      margin-top: 15px;
+      padding: 15px;
+      background: #f3fff6;
+      border-radius: 10px;
+      text-align: center;
+      line-height: 1.7;
+    }
+
+    .contact-box strong {
+      color: #128c3a;
+    }
+
+    footer {
+      margin-top: 30px;
+      padding: 25px 15px;
+      text-align: center;
+      background: #222;
+      color: white;
+      line-height: 1.7;
+    }
+
+    @media(max-width:600px) {
+
+      .container {
+        padding: 12px;
+      }
+
+      header h1 {
+        font-size: 27px;
+      }
+
+      .hero {
+        padding: 25px 15px;
+      }
+
+      .hero h2 {
+        font-size: 23px;
+      }
+
+      .food-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+
+      .food-card img {
+        height: 125px;
+      }
+
+      .food-info {
+        padding: 10px;
+      }
+
+      .food-info h3 {
+        font-size: 15px;
+      }
+
+      .food-info p {
+        font-size: 12px;
+        min-height: 48px;
+      }
+
+      .price {
+        font-size: 16px;
+      }
+
+      .add-btn {
+        font-size: 13px;
+        padding: 10px;
+      }
+
+      .cart-item {
+        flex-wrap: wrap;
+      }
+
+      .item-total {
+        min-width: auto;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+  <h1>🍴 ChopNow</h1>
+
+  <p>Delicious food. Fast ordering.</p>
+
+</header>
+
+
+<div class="container">
+
+
+  <!-- HERO -->
+
+  <section class="hero">
+
+    <h2>Welcome to ChopNow</h2>
+
+    <p>
+      Choose your favourite meal,
+      add it to your cart and order
+      directly through WhatsApp.
+    </p>
+
+    <div class="business-info">
+
+      <strong>🏪 ChopNow</strong>
+
+      <br>
+
+      📲 WhatsApp:
+      <strong>+234 707 828 6301</strong>
+
+    </div>
+
+  </section>
+
+
+
+  <!-- CATEGORIES -->
+
+  <div class="categories">
+
+    <button
+      class="category active"
+      onclick="filterFood('all', this)"
+    >
+      All
+    </button>
+
+    <button
+      class="category"
+      onclick="filterFood('rice', this)"
+    >
+      Rice
+    </button>
+
+    <button
+      class="category"
+      onclick="filterFood('swallow', this)"
+    >
+      Swallow
+    </button>
+
+    <button
+      class="category"
+      onclick="filterFood('snacks', this)"
+    >
+      Snacks
+    </button>
+
+    <button
+      class="category"
+      onclick="filterFood('drinks', this)"
+    >
+      Drinks
+    </button>
+
+  </div>
+
+
+
+  <!-- FOOD -->
+
+  <div
+    class="food-grid"
+    id="foodGrid"
+  ></div>
+
+
+
+  <!-- CART -->
+
+  <section class="cart">
+
+    <h2>🛒 Your Cart</h2>
+
+    <div id="cartItems">
+
+      <p class="empty">
+        Your cart is empty.
+      </p>
+
+    </div>
+
+
+    <div class="totals">
+
+      <p>
+        Subtotal:
+        ₦<span id="subtotal">0</span>
+      </p>
+
+      <p>
+        Delivery:
+        ₦<span id="delivery">0</span>
+      </p>
+
+      <p class="total">
+        Total:
+        ₦<span id="total">0</span>
+      </p>
+
+    </div>
+
+  </section>
+
+
+
+  <!-- CHECKOUT -->
+
+  <section class="checkout">
+
+    <h2>📦 Checkout</h2>
+
+
+    <label for="customerName">
+      👤 Your Name
+    </label>
+
+    <input
+      type="text"
+      id="customerName"
+      placeholder="Enter your full name"
+      autocomplete="name"
+    >
+
+
+    <label for="customerPhone">
+      📱 Phone Number
+    </label>
+
+    <input
+      type="tel"
+      id="customerPhone"
+      placeholder="Enter your phone number"
+      autocomplete="tel"
+    >
+
+
+    <label for="customerAddress">
+      📍 Delivery Address
+    </label>
+
+    <textarea
+      id="customerAddress"
+      rows="4"
+      placeholder="Enter your full delivery address"
+    ></textarea>
+
+
+    <label for="paymentMethod">
+      💳 Payment Method
+    </label>
+
+    <select id="paymentMethod">
+
+      <option value="">
+        Select payment method
+      </option>
+
+      <option value="Cash on Delivery">
+        Cash on Delivery
+      </option>
+
+      <option value="Bank Transfer">
+        Bank Transfer
+      </option>
+
+    </select>
+
+
+    <button
+      class="whatsapp-btn"
+      onclick="placeOrder()"
+    >
+      📲 Order via WhatsApp
+    </button>
+
+
+    <div class="contact-box">
+
+      <strong>Need help with your order?</strong>
+
+      <br>
+
+      WhatsApp:
+      <strong>+234 707 828 6301</strong>
+
+    </div>
+
+  </section>
+
+
+</div>
+
+
+
+<!-- FOOTER -->
+
+<footer>
+
+  <p>
+    © 2026 ChopNow.
+    All rights reserved.
+  </p>
+
+  <p>
+    📲 +234 707 828 6301
+  </p>
+
+</footer>
+
+
+
+<script>
+
+
+/* =====================================================
+   CHOPNOW BUSINESS INFORMATION
+   ===================================================== */
+
+const BUSINESS_NAME = "ChopNow";
+
+const WHATSAPP_NUMBER = "2347078286301";
+
+const DELIVERY_FEE = 1000;
+
+
+
+/* =====================================================
+   FOOD MENU
+   ===================================================== */
+
+const foods = [
+
+  {
+    id: 1,
+    name: "Jollof Rice",
+    category: "rice",
+    price: 2500,
+    image:
+      "https://images.unsplash.com/photo-1603133872878-684f208fb84b?auto=format&fit=crop&w=800&q=80",
+    description:
+      "Delicious Nigerian-style jollof rice."
+  },
+
+  {
+    id: 2,
+    name: "Fried Rice",
+    category: "rice",
+    price: 2800,
+    image:
+      "https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=800&q=80",
+    description:
+      "Tasty fried rice with fresh vegetables."
+  },
+
+  {
+    id: 3,
+    name: "Chicken & Chips",
+    category: "rice",
+    price: 3500,
+    image:
+      "https://images.unsplash.com/photo-1562967914-608f82629710?auto=format&fit=crop&w=800&q=80",
+    description:
+      "Crispy chicken served with golden chips."
+  },
+
+  {
+    id: 4,
+    name: "Pounded Yam & Egusi",
+    category: "swallow",
+    price: 3500,
+    image:
+      "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=800&q=80",
+    description:
+      "Soft pounded yam with rich egusi soup."
+  },
+
+  {
+    id: 5,
+    name: "Amala & Ewedu",
+    category: "swallow",
+    price: 3000,
+    image:
+      "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=800&q=80",
+    description:
+      "Traditional amala served with ewedu."
+  },
+
+  {
+    id: 6,
+    name: "Fufu & Soup",
+    category: "swallow",
+    price: 3000,
+    image:
+      "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=800&q=80",
+    description:
+      "Smooth fufu with delicious Nigerian soup."
+  },
+
+  {
+    id: 7,
+    name: "Meat Pie",
+    category: "snacks",
+    price: 1000,
+    image:
+      "https://images.unsplash.com/photo-1601050690117-94f5f6fa8bd7?auto=format&fit=crop&w=800&q=80",
+    description:
+      "Freshly baked Nigerian meat pie."
+  },
+
+  {
+    id: 8,
+    name: "Chicken Pie",
+    category: "snacks",
+    price: 1200,
+    image:
+      "https://images.unsplash.com/photo-1628840042765-356cda07504e?auto=format&fit=crop&w=800&q=80",
+    description:
+      "Crispy pastry filled with chicken."
+  },
+
+  {
+    id: 9,
+    name: "Samosa",
+    category: "snacks",
+    price: 800,
+    image:
+      "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=800&q=80",
+    description:
+      "Crunchy samosa with tasty filling."
+  },
+
+  {
+    id: 10,
+    name: "Chapman",
+    category: "drinks",
+    price: 1500,
+    image:
+      "https://images.unsplash.com/photo-1544145945-f90425340c7e?auto=format&fit=crop&w=800&q=80",
+    description:
+      "Refreshing Nigerian-style Chapman."
+  },
+
+  {
+    id: 11,
+    name: "Fresh Juice",
+    category: "drinks",
+    price: 1200,
+    image:
+      "https://images.unsplash.com/photo-1600271886742-f049cd451bba?auto=format&fit=crop&w=800&q=80",
+    description:
+      "Fresh and refreshing fruit juice."
+  },
+
+  {
+    id: 12,
+    name: "Soft Drink",
+    category: "drinks",
+    price: 700,
+    image:
+      "https://images.unsplash.com/photo-1629203851122-3726ecdf080e?auto=format&fit=crop&w=800&q=80",
+    description:
+      "Cold refreshing soft drink."
+  }
+
+];
+
+
+
+/* =====================================================
+   CART
+   ===================================================== */
+
+let cart = [];
+
+
+
+/* =====================================================
+   MONEY FORMAT
+   ===================================================== */
+
+function money(amount) {
+
+  return amount.toLocaleString("en-NG");
+
+}
+
+
+
+/* =====================================================
+   DISPLAY FOOD
+   ===================================================== */
+
+function displayFoods(category = "all") {
+
+  const grid =
+    document.getElementById("foodGrid");
+
+  grid.innerHTML = "";
+
+
+  const list =
+    category === "all"
+      ? foods
+      : foods.filter(
+          food => food.category === category
+        );
+
+
+  list.forEach(food => {
+
+    const card =
+      document.createElement("div");
+
+    card.className = "food-card";
+
+
+    card.innerHTML = `
+
+      <img
+        src="${food.image}"
+        alt="${food.name}"
+      >
+
+      <div class="food-info">
+
+        <h3>
+          ${food.name}
+        </h3>
+
+        <p>
+          ${food.description}
+        </p>
+
+        <div class="price">
+          ₦${money(food.price)}
+        </div>
+
+        <button
+          class="add-btn"
+          onclick="addToCart(${food.id})"
+        >
+          Add to Cart
+        </button>
+
+      </div>
+
+    `;
+
+
+    grid.appendChild(card);
+
+  });
+
+}
+
+
+
+/* =====================================================
+   FILTER FOOD
+   ===================================================== */
+
+function filterFood(category, button) {
+
+  document
+    .querySelectorAll(".category")
+    .forEach(btn =>
+      btn.classList.remove("active")
+    );
+
+
+  button.classList.add("active");
+
+
+  displayFoods(category);
+
+}
+
+
+
+/* =====================================================
+   ADD TO CART
+   ===================================================== */
+
+function addToCart(id) {
+
+  const food =
+    foods.find(item => item.id === id);
+
+
+  const existing =
+    cart.find(item => item.id === id);
+
+
+  if (existing) {
+
+    existing.quantity++;
+
+  } else {
+
+    cart.push({
+
+      ...food,
+
+      quantity: 1
+
+    });
+
+  }
+
+
+  updateCart();
+
+}
+
+
+
+/* =====================================================
+   INCREASE QUANTITY
+   ===================================================== */
+
+function increaseQuantity(id) {
+
+  const item =
+    cart.find(item => item.id === id);
+
+
+  if (item) {
+
+    item.quantity++;
+
+  }
+
+
+  updateCart();
+
+}
+
+
+
+/* =====================================================
+   DECREASE QUANTITY
+   ===================================================== */
+
+function decreaseQuantity(id) {
+
+  const item =
+    cart.find(item => item.id === id);
+
+
+  if (!item) return;
+
+
+  item.quantity--;
+
+
+  if (item.quantity <= 0) {
+
+    cart =
+      cart.filter(
+        item => item.id !== id
+      );
+
+  }
+
+
+  updateCart();
+
+}
+
+
+
+/* =====================================================
+   UPDATE CART
+   ===================================================== */
+
+function updateCart() {
+
+  const cartItems =
+    document.getElementById("cartItems");
+
+
+  if (cart.length === 0) {
+
+    cartItems.innerHTML =
+      '<p class="empty">Your cart is empty.</p>';
+
+    document.getElementById(
+      "subtotal"
+    ).textContent = "0";
+
+    document.getElementById(
+      "delivery"
+    ).textContent = "0";
+
+    document.getElementById(
+      "total"
+    ).textContent = "0";
+
+    return;
+
+  }
+
+
+  cartItems.innerHTML = "";
+
+
+  cart.forEach(item => {
+
+    const row =
+      document.createElement("div");
+
+    row.className = "cart-item";
+
+
+    row.innerHTML = `
+
+      <div class="cart-item-name">
+
+        <strong>
+          ${item.name}
+        </strong>
+
+        <span class="cart-item-price">
+          ₦${money(item.price)} each
+        </span>
+
+      </div>
+
+
+      <div class="quantity">
+
+        <button
+          onclick="decreaseQuantity(${item.id})"
+        >
+          -
+        </button>
+
+        <span>
+          ${item.quantity}
+        </span>
+
+        <button
+          onclick="increaseQuantity(${item.id})"
+        >
+          +
+        </button>
+
+      </div>
+
+
+      <div class="item-total">
+        ₦${money(
+          item.price * item.quantity
+        )}
+      </div>
+
+    `;
+
+
+    cartItems.appendChild(row);
+
+  });
+
+
+  const subtotal =
+    cart.reduce(
+
+      (sum, item) =>
+        sum +
+        item.price *
+        item.quantity,
+
+      0
+
+    );
+
+
+  const delivery =
+    DELIVERY_FEE;
+
+
+  const total =
+    subtotal + delivery;
+
+
+  document.getElementById(
+    "subtotal"
+  ).textContent =
+    money(subtotal);
+
+
+  document.getElementById(
+    "delivery"
+  ).textContent =
+    money(delivery);
+
+
+  document.getElementById(
+    "total"
+  ).textContent =
+    money(total);
+
+}
+
+
+
+/* =====================================================
+   PLACE ORDER
+   ===================================================== */
+
+function placeOrder() {
+
+
+  /* Check cart */
+
+  if (cart.length === 0) {
+
+    alert(
+      "Please add a meal to your cart first."
+    );
+
+    return;
+
+  }
+
+
+
+  /* Get customer details */
+
+  const name =
+    document
+      .getElementById("customerName")
+      .value
+      .trim();
+
+
+  const phone =
+    document
+      .getElementById("customerPhone")
+      .value
+      .trim();
+
+
+  const address =
+    document
+      .getElementById("customerAddress")
+      .value
+      .trim();
+
+
+  const payment =
+    document
+      .getElementById("paymentMethod")
+      .value;
+
+
+
+  /* Validate checkout */
+
+  if (
+    !name ||
+    !phone ||
+    !address ||
+    !payment
+  ) {
+
+    alert(
+      "Please complete your name, phone number, delivery address and payment method."
+    );
+
+    return;
+
+  }
+
+
+
+  /* Calculate totals */
+
+  const subtotal =
+    cart.reduce(
+
+      (sum, item) =>
+        sum +
+        item.price *
+        item.quantity,
+
+      0
+
+    );
+
+
+  const delivery =
+    DELIVERY_FEE;
+
+
+  const total =
+    subtotal + delivery;
+
+
+
+  /* Build WhatsApp message */
+
+  let message =
+
+    "🍴 " +
+    BUSINESS_NAME +
+    " FOOD ORDER\n\n";
+
+
+  message +=
+
+    "🏪 Restaurant: " +
+    BUSINESS_NAME +
+    "\n";
+
+
+  message +=
+
+    "📲 WhatsApp: +234 707 828 6301\n\n";
+
+
+  message +=
+
+    "👤 CUSTOMER DETAILS\n";
+
+
+  message +=
+
+    "Name: " +
+    name +
+    "\n";
+
+
+  message +=
+
+    "📱 Phone: " +
+    phone +
+    "\n";
+
+
+  message +=
+
+    "📍 Address: " +
+    address +
+    "\n";
+
+
+  message +=
+
+    "💳 Payment: " +
+    payment +
+    "\n\n";
+
+
+  message +=
+
+    "🛒 ORDER ITEMS\n";
+
+
+  cart.forEach(item => {
+
+    message +=
+
+      "• " +
+      item.name +
+      " x" +
+      item.quantity +
+      " - ₦" +
+      money(
+        item.price *
+        item.quantity
+      ) +
+      "\n";
+
+  });
+
+
+  message +=
+
+    "\nSubtotal: ₦" +
+    money(subtotal);
+
+
+  message +=
+
+    "\nDelivery: ₦" +
+    money(delivery);
+
+
+  message +=
+
+    "\nTOTAL: ₦" +
+    money(total);
+
+
+  message +=
+
+    "\n\nThank you for ordering from " +
+    BUSINESS_NAME +
+    "! 🍴";
+
+
+
+  /* WhatsApp URL */
+
+  const whatsappURL =
+
+    "https://wa.me/" +
+    WHATSAPP_NUMBER +
+    "?text=" +
+    encodeURIComponent(message);
+
+
+
+  /* Open WhatsApp */
+
+  window.open(
+    whatsappURL,
+    "_blank"
+  );
+
+}
+
+
+
+/* =====================================================
+   START WEBSITE
+   ===================================================== */
+
+displayFoods();
+
+updateCart();
+
+</script>
+
+
+</body>
+
+  </html>
